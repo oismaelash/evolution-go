@@ -31,12 +31,17 @@ Evolution Go is a high-performance WhatsApp API built in Go, part of the [Evolut
 
 ### Docker (Recommended)
 
+The easiest and fastest way to start the project with all its dependencies (PostgreSQL, RabbitMQ, MinIO) is by using our automated script:
+
 ```bash
 git clone https://github.com/EvolutionAPI/evolution-go.git
 cd evolution-go
-make docker-build
-make docker-run
+
+# Runs the script that will prepare dependencies, variables, and start the containers
+bash ./start.sh
 ```
+
+> **Note:** The `start.sh` script will initialize submodules, create your `.env` based on `.env.example` (adjusting hosts for Docker), and run `docker compose up -d --build`.
 
 ### Local Development
 
