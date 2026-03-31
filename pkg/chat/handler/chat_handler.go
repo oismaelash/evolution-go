@@ -3,6 +3,8 @@ package chat_handler
 import (
 	"net/http"
 
+	_ "github.com/EvolutionAPI/evolution-go/pkg/core"
+
 	chat_service "github.com/EvolutionAPI/evolution-go/pkg/chat/service"
 	instance_model "github.com/EvolutionAPI/evolution-go/pkg/instance/model"
 	"github.com/gin-gonic/gin"
@@ -29,9 +31,12 @@ type chatHandler struct {
 // @Accept json
 // @Produce json
 // @Param message body chat_service.BodyStruct true "Chat"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.ChatActionResponse "success"
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /chat/pin [post]
 func (c *chatHandler) ChatPin(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -74,9 +79,12 @@ func (c *chatHandler) ChatPin(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body chat_service.BodyStruct true "Chat"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.ChatActionResponse "success"
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /chat/unpin [post]
 func (c *chatHandler) ChatUnpin(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -119,9 +127,12 @@ func (c *chatHandler) ChatUnpin(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body chat_service.BodyStruct true "Chat"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.ChatActionResponse "success"
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /chat/archive [post]
 func (c *chatHandler) ChatArchive(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -164,9 +175,12 @@ func (c *chatHandler) ChatArchive(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body chat_service.BodyStruct true "Chat"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.ChatActionResponse "success"
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /chat/unarchive [post]
 func (c *chatHandler) ChatUnarchive(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -209,9 +223,12 @@ func (c *chatHandler) ChatUnarchive(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body chat_service.BodyStruct true "Chat"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.ChatActionResponse "success"
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /chat/mute [post]
 func (c *chatHandler) ChatMute(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -254,9 +271,12 @@ func (c *chatHandler) ChatMute(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body chat_service.BodyStruct true "Chat"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.ChatActionResponse "success"
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /chat/unmute [post]
 func (c *chatHandler) ChatUnmute(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -299,10 +319,13 @@ func (c *chatHandler) ChatUnmute(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body chat_service.HistorySyncRequestStruct true "Chat"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
-// @Router /chat/history-sync-request [post]
+// @Success 200 {object} core.HistorySyncResponse "success"
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
+// @Router /chat/history-sync [post]
 func (c *chatHandler) HistorySyncRequest(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
 

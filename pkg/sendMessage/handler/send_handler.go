@@ -1,6 +1,7 @@
 package send_handler
 
 import (
+_ "github.com/EvolutionAPI/evolution-go/pkg/core"
 	"io"
 	"net/http"
 	"strconv"
@@ -34,9 +35,12 @@ type sendHandler struct {
 // @Accept json
 // @Produce json
 // @Param message body send_service.TextStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/text [post]
 func (s *sendHandler) SendText(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -80,9 +84,12 @@ func (s *sendHandler) SendText(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.LinkStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/link [post]
 func (s *sendHandler) SendLink(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -126,9 +133,12 @@ func (s *sendHandler) SendLink(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.MediaStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/media [post]
 func (s *sendHandler) SendMedia(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -251,9 +261,12 @@ func (s *sendHandler) SendMedia(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.PollStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/poll [post]
 func (s *sendHandler) SendPoll(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -302,9 +315,12 @@ func (s *sendHandler) SendPoll(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.StickerStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/sticker [post]
 func (s *sendHandler) SendSticker(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -348,9 +364,12 @@ func (s *sendHandler) SendSticker(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.LocationStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/location [post]
 func (s *sendHandler) SendLocation(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -409,9 +428,12 @@ func (s *sendHandler) SendLocation(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.ContactStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/contact [post]
 func (s *sendHandler) SendContact(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -460,9 +482,12 @@ func (s *sendHandler) SendContact(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.ContactStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/button [post]
 func (s *sendHandler) SendButton(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -516,9 +541,12 @@ func (s *sendHandler) SendButton(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body send_service.ContactStruct true "Message data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /send/list [post]
 func (s *sendHandler) SendList(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")

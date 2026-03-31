@@ -3,7 +3,10 @@ package label_handler
 import (
 	"net/http"
 
+	_ "github.com/EvolutionAPI/evolution-go/pkg/core"
+
 	instance_model "github.com/EvolutionAPI/evolution-go/pkg/instance/model"
+	_ "github.com/EvolutionAPI/evolution-go/pkg/label/model"
 	label_service "github.com/EvolutionAPI/evolution-go/pkg/label/service"
 	"github.com/gin-gonic/gin"
 )
@@ -28,9 +31,12 @@ type labelHandler struct {
 // @Accept json
 // @Produce json
 // @Param message body label_service.ChatLabelStruct true "Label data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SuccessResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /label/chat [post]
 func (l *labelHandler) ChatLabel(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -74,9 +80,12 @@ func (l *labelHandler) ChatLabel(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body label_service.MessageLabelStruct true "Label data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SuccessResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /label/message [post]
 func (l *labelHandler) MessageLabel(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -125,9 +134,12 @@ func (l *labelHandler) MessageLabel(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body label_service.EditLabelStruct true "Label data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SuccessResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /label/edit [post]
 func (l *labelHandler) EditLabel(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -171,9 +183,12 @@ func (l *labelHandler) EditLabel(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body label_service.ChatLabelStruct true "Label data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SuccessResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /unlabel/chat [post]
 func (l *labelHandler) ChatUnlabel(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -217,9 +232,12 @@ func (l *labelHandler) ChatUnlabel(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body label_service.MessageLabelStruct true "Label data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SuccessResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /unlabel/message [post]
 func (l *labelHandler) MessageUnlabel(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -267,8 +285,12 @@ func (l *labelHandler) MessageUnlabel(ctx *gin.Context) {
 // @Tags Label
 // @Accept json
 // @Produce json
-// @Success 200 {object} gin.H "success"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.LabelListResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /label [get]
 func (l *labelHandler) GetLabels(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -285,7 +307,7 @@ func (l *labelHandler) GetLabels(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, labels)
+	ctx.JSON(http.StatusOK, gin.H{"message": "success", "data": labels})
 }
 
 func NewLabelHandler(

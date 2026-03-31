@@ -68,19 +68,12 @@ import (
 
 var devMode = flag.Bool("dev", false, "Enable development mode")
 
-var version = "0.0.0"
-
-func init() {
-	// ldflags -X main.version= sets this at compile time.
-	// If not set (or still default), try reading from VERSION file.
-	if version == "0.0.0" {
-		if v, err := os.ReadFile("VERSION"); err == nil {
-			if trimmed := strings.TrimSpace(string(v)); trimmed != "" {
-				version = trimmed
-			}
-		}
+var version = func() string {
+	if v, err := os.ReadFile("VERSION"); err == nil {
+		return strings.TrimSpace(string(v))
 	}
-}
+	return "dev"
+}()
 
 func setupRouter(db *gorm.DB, authDB *sql.DB, sqliteDB *sql.DB, config *config.Config, conn *amqp.Connection, exPath string, runtimeCtx *core.RuntimeContext) *gin.Engine {
 	killChannel := make(map[string](chan bool))
@@ -245,6 +238,14 @@ func setupRouter(db *gorm.DB, authDB *sql.DB, sqliteDB *sql.DB, config *config.C
 		go whatsmeowService.ConnectOnStartup(config.ClientName)
 	}
 
+	// @Summary WebSocket Connection
+	// @Description Connect to the WebSocket
+	// @Tags WebSocket
+	// @Param token query string true "Global API Key"
+	// @Param instanceId query string true "Instance ID"
+	// @Success 101 {string} string "Switching Protocols"
+	// @Failure 401 {object} gin.H "Unauthorized"
+	// @Router /ws [get]
 	r.GET("/ws", func(c *gin.Context) {
 		token := c.Query("token")
 		instanceId := c.Query("instanceId")

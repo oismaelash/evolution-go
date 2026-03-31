@@ -1,6 +1,7 @@
 package newsletter_handler
 
 import (
+_ "github.com/EvolutionAPI/evolution-go/pkg/core"
 	"net/http"
 
 	instance_model "github.com/EvolutionAPI/evolution-go/pkg/instance/model"
@@ -28,9 +29,12 @@ type newsletterHandler struct {
 // @Accept json
 // @Produce json
 // @Param message body newsletter_service.CreateNewsletterStruct true "Newsletter data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.NewsletterResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /newsletter/create [post]
 func (n *newsletterHandler) CreateNewsletter(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -68,8 +72,12 @@ func (n *newsletterHandler) CreateNewsletter(ctx *gin.Context) {
 // @Tags Newsletter
 // @Accept json
 // @Produce json
-// @Success 200 {object} gin.H "success"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.NewsletterListResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /newsletter/list [get]
 func (n *newsletterHandler) ListNewsletter(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -96,9 +104,12 @@ func (n *newsletterHandler) ListNewsletter(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body newsletter_service.GetNewsletterStruct true "Newsletter data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.NewsletterResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /newsletter/info [post]
 func (n *newsletterHandler) GetNewsletter(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -137,9 +148,12 @@ func (n *newsletterHandler) GetNewsletter(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body newsletter_service.GetNewsletterInviteStruct true "Newsletter data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.NewsletterResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /newsletter/link [post]
 func (n *newsletterHandler) GetNewsletterInvite(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -178,9 +192,12 @@ func (n *newsletterHandler) GetNewsletterInvite(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body newsletter_service.GetNewsletterStruct true "Newsletter data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SuccessResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /newsletter/subscribe [post]
 func (n *newsletterHandler) SubscribeNewsletter(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -219,9 +236,12 @@ func (n *newsletterHandler) SubscribeNewsletter(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body newsletter_service.GetNewsletterMessagesStruct true "Newsletter data"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.NewsletterMessagesResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /newsletter/messages [post]
 func (n *newsletterHandler) GetNewsletterMessages(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
