@@ -1914,16 +1914,59 @@ func (w *whatsmeowService) CallWebhook(instance *instance_model.Instance, queueN
 		if contains(subscriptions, "MESSAGE") {
 			w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s", instance.Id, eventType)
 			w.sendToQueueOrWebhook(instance, queueName, jsonData)
+		} else {
+			// Check if message is from group or newsletter and if user is subscribed to it
+			if dataMap, ok := data["data"].(map[string]interface{}); ok {
+				if infoMap, ok := dataMap["Info"].(map[string]interface{}); ok {
+					if chat, ok := infoMap["Chat"].(string); ok {
+						if strings.HasSuffix(chat, "@g.us") && contains(subscriptions, "GROUP") {
+							w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s (Group)", instance.Id, eventType)
+							w.sendToQueueOrWebhook(instance, queueName, jsonData)
+						} else if strings.HasSuffix(chat, "@newsletter") && contains(subscriptions, "NEWSLETTER") {
+							w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s (Newsletter)", instance.Id, eventType)
+							w.sendToQueueOrWebhook(instance, queueName, jsonData)
+						}
+					}
+				}
+			}
 		}
 	case "SendMessage":
 		if contains(subscriptions, "SEND_MESSAGE") {
 			w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s", instance.Id, eventType)
 			w.sendToQueueOrWebhook(instance, queueName, jsonData)
+		} else {
+			// Check if message is to group or newsletter and if user is subscribed to it
+			if dataMap, ok := data["data"].(map[string]interface{}); ok {
+				if infoMap, ok := dataMap["Info"].(map[string]interface{}); ok {
+					if chat, ok := infoMap["Chat"].(string); ok {
+						if strings.HasSuffix(chat, "@g.us") && contains(subscriptions, "GROUP") {
+							w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s (Group)", instance.Id, eventType)
+							w.sendToQueueOrWebhook(instance, queueName, jsonData)
+						} else if strings.HasSuffix(chat, "@newsletter") && contains(subscriptions, "NEWSLETTER") {
+							w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s (Newsletter)", instance.Id, eventType)
+							w.sendToQueueOrWebhook(instance, queueName, jsonData)
+						}
+					}
+				}
+			}
 		}
 	case "Receipt":
 		if contains(subscriptions, "READ_RECEIPT") {
 			w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s", instance.Id, eventType)
 			w.sendToQueueOrWebhook(instance, queueName, jsonData)
+		} else {
+			// Check if receipt is from group or newsletter and if user is subscribed to it
+			if dataMap, ok := data["data"].(map[string]interface{}); ok {
+				if chat, ok := dataMap["Chat"].(string); ok {
+					if strings.HasSuffix(chat, "@g.us") && contains(subscriptions, "GROUP") {
+						w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s (Group)", instance.Id, eventType)
+						w.sendToQueueOrWebhook(instance, queueName, jsonData)
+					} else if strings.HasSuffix(chat, "@newsletter") && contains(subscriptions, "NEWSLETTER") {
+						w.loggerWrapper.GetLogger(instance.Id).LogInfo("[%s] Event received of type %s (Newsletter)", instance.Id, eventType)
+						w.sendToQueueOrWebhook(instance, queueName, jsonData)
+					}
+				}
+			}
 		}
 	case "Presence":
 		if contains(subscriptions, "PRESENCE") {
