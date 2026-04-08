@@ -200,7 +200,7 @@ func setupRouter(db *gorm.DB, authDB *sql.DB, sqliteDB *sql.DB, config *config.C
 	// NOVO: PollHandler usando PollService já inicializado no whatsmeowService (evita dupla inicialização)
 	pollHandler := poll_handler.NewPollHandler(whatsmeowService.GetPollService(), loggerWrapper)
 
-	telemetry := telemetry.NewTelemetryService()
+	telemetry := telemetry.NewTelemetryService(config.TelemetryEnabled)
 
 	r := gin.Default()
 

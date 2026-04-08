@@ -60,6 +60,7 @@ type Config struct {
 	EventIgnoreStatus    bool
 	QrcodeMaxCount       int
 	CheckUserExists      bool
+	TelemetryEnabled     bool
 
 	// Logger configurations
 	LogMaxSize    int
@@ -67,7 +68,6 @@ type Config struct {
 	LogMaxAge     int
 	LogDirectory  string
 	LogCompress   bool
-
 }
 
 // EnsureDBExists connects to postgres (without the target database) and creates it if it doesn't exist.
@@ -274,6 +274,7 @@ func Load() *Config {
 	eventIgnoreStatus := os.Getenv(config_env.EVENT_IGNORE_STATUS)
 	qrcodeMaxCount := os.Getenv(config_env.QRCODE_MAX_COUNT)
 	checkUserExists := os.Getenv(config_env.CHECK_USER_EXISTS)
+	telemetryEnabled := os.Getenv(config_env.TELEMETRY_ENABLED)
 
 	if checkUserExists == "" {
 		checkUserExists = "true"
@@ -372,7 +373,8 @@ func Load() *Config {
 		EventIgnoreGroup:     eventIgnoreGroup == "true",
 		EventIgnoreStatus:    eventIgnoreStatus == "true",
 		QrcodeMaxCount:       qrMaxCount,
-		CheckUserExists:      checkUserExists != "false", // Default true, set to false to disable
+		CheckUserExists:      checkUserExists != "false",  // Default true, set to false to disable
+		TelemetryEnabled:     telemetryEnabled != "false", // Default true, set to false to disable
 		AmqpGlobalEvents:     amqpGlobalEvents,
 		AmqpSpecificEvents:   amqpSpecificEvents,
 		NatsUrl:              natsUrl,

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,10 +17,16 @@ type TelemetryData struct {
 	Timestamp  time.Time `json:"timestamp"`
 }
 
-type telemetryService struct{}
+type telemetryService struct {
+	enabled bool
+}
 
 func (t *telemetryService) TelemetryMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if !t.enabled {
+			c.Next()
+			return
+		}
 		route := c.FullPath()
 		go SendTelemetry(route)
 		c.Next()
@@ -51,12 +58,17 @@ func SendTelemetry(route string) {
 
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(data))
 	if err != nil {
-		log.Println("Erro ao enviar telemetria:", err)
+		// Silence DNS lookup errors or connection refused as they are common in restricted environments
+		if !strings.Contains(err.Error(), "no such host") && !strings.Contains(err.Error(), "connection refused") {
+			log.Println("Erro ao enviar telemetria:", err)
+		}
 		return
 	}
 	defer resp.Body.Close()
 }
 
-func NewTelemetryService() TelemetryService {
-	return &telemetryService{}
+func NewTelemetryService(enabled bool) TelemetryService {
+	return &telemetryService{
+		enabled: enabled,
+	}
 }
