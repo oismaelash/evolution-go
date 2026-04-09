@@ -3,6 +3,8 @@ package message_handler
 import (
 	"net/http"
 
+	_ "github.com/EvolutionAPI/evolution-go/pkg/core"
+
 	instance_model "github.com/EvolutionAPI/evolution-go/pkg/instance/model"
 	message_service "github.com/EvolutionAPI/evolution-go/pkg/message/service"
 	"github.com/gin-gonic/gin"
@@ -29,9 +31,12 @@ type messageHandler struct {
 // @Accept json
 // @Produce json
 // @Param message body message_service.ReactStruct true "React to a message with fromMe and participant fields"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /message/react [post]
 func (m *messageHandler) React(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -75,9 +80,12 @@ func (m *messageHandler) React(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body message_service.ChatPresenceStruct true "Set chat presence"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /message/presence [post]
 func (m *messageHandler) ChatPresence(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -125,9 +133,12 @@ func (m *messageHandler) ChatPresence(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body message_service.MarkReadStruct true "Mark a message as read"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /message/markread [post]
 func (m *messageHandler) MarkRead(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -174,10 +185,13 @@ func (m *messageHandler) MarkRead(ctx *gin.Context) {
 // @Tags Message
 // @Accept json
 // @Produce json
-// @Param message body message_service.DownloadImageStruct true "Download an image"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Param message body message_service.DownloadMediaStruct true "Download an image"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /message/downloadimage [post]
 func (m *messageHandler) DownloadMedia(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -216,9 +230,12 @@ func (m *messageHandler) DownloadMedia(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body message_service.MessageStatusStruct true "Get message status"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /message/status [post]
 func (m *messageHandler) GetMessageStatus(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -262,9 +279,12 @@ func (m *messageHandler) GetMessageStatus(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body message_service.MessageStruct true "Delete a message for everyone"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /message/delete [post]
 func (m *messageHandler) DeleteMessageEveryone(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")
@@ -313,9 +333,12 @@ func (m *messageHandler) DeleteMessageEveryone(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param message body message_service.EditMessageStruct true "Edit a message"
-// @Success 200 {object} gin.H "success"
-// @Failure 400 {object} gin.H "Error on validation"
-// @Failure 500 {object} gin.H "Internal server error"
+// @Success 200 {object} core.SendMessageResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /message/edit [post]
 func (m *messageHandler) EditMessage(ctx *gin.Context) {
 	getInstance := ctx.MustGet("instance")

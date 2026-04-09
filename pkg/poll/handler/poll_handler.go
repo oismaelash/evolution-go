@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	_ "github.com/EvolutionAPI/evolution-go/pkg/core"
+
 	logger_wrapper "github.com/EvolutionAPI/evolution-go/pkg/logger"
 	poll_service "github.com/EvolutionAPI/evolution-go/pkg/poll/service"
 	"github.com/gin-gonic/gin"
@@ -29,10 +31,12 @@ func NewPollHandler(pollService poll_service.PollService, loggerWrapper *logger_
 // @Accept json
 // @Produce json
 // @Param pollMessageId path string true "ID da mensagem da enquete"
-// @Success 200 {object} model.PollResults
-// @Failure 400 {object} gin.H
-// @Failure 404 {object} gin.H
-// @Failure 500 {object} gin.H
+// @Success 200 {object} core.PollResultsResponse
+// @Failure 400 {object} core.Error400
+// @Failure 401 {object} core.Error401
+// @Failure 403 {object} core.Error403
+// @Failure 404 {object} core.Error404
+// @Failure 500 {object} core.Error500
 // @Router /polls/{pollMessageId}/results [get]
 func (h *PollHandler) GetPollResults(c *gin.Context) {
 	pollMessageID := c.Param("pollMessageId")
@@ -94,5 +98,5 @@ func (h *PollHandler) GetPollResults(c *gin.Context) {
 	}
 
 	h.loggerWrapper.GetLogger("poll-handler").LogInfo("[POLL] Returning %d votes for poll %s", results.TotalVotes, pollMessageID)
-	c.JSON(http.StatusOK, results)
+	c.JSON(http.StatusOK, gin.H{"message": "success", "data": results})
 }

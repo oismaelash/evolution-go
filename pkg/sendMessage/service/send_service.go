@@ -234,12 +234,12 @@ type CarouselCardStruct struct {
 }
 
 type CarouselStruct struct {
-	Number    string             `json:"number"`
-	Body      string             `json:"body,omitempty"`
-	Footer    string             `json:"footer,omitempty"`
-	Delay     int32              `json:"delay"`
-	FormatJid *bool              `json:"formatJid,omitempty"`
-	Quoted    QuotedStruct       `json:"quoted"`
+	Number    string               `json:"number"`
+	Body      string               `json:"body,omitempty"`
+	Footer    string               `json:"footer,omitempty"`
+	Delay     int32                `json:"delay"`
+	FormatJid *bool                `json:"formatJid,omitempty"`
+	Quoted    QuotedStruct         `json:"quoted"`
 	Cards     []CarouselCardStruct `json:"cards"`
 }
 
@@ -1642,48 +1642,88 @@ func (s *sendService) SendButton(data *ButtonStruct, instance *instance_model.In
 
 	messageId := client.GenerateMessageID()
 	templateId := strconv.FormatInt(time.Now().UnixNano()/1000000, 10)
-	messageParamsJSON := `{"from":"api","templateId":` + templateId + `}`
+	messageParamsJSON := `{"from":"api","templateId":"` + templateId + `"}`
 
 	var msg *waE2E.Message
+
+	contextInfo := &waE2E.ContextInfo{}
+	if data.Quoted.MessageID != "" {
+		contextInfo.StanzaID = proto.String(data.Quoted.MessageID)
+		if data.Quoted.Participant != "" {
+			participantJID, ok := utils.ParseJID(data.Quoted.Participant)
+			if ok {
+				contextInfo.Participant = proto.String(participantJID.String())
+			}
+		}
+	}
+
+	// Nova tentativa: Se a conta não é oficial (API Cloud), o WhatsApp Mobile frequentemente dropa NativeFlow.
+	// Vamos usar o modelo de ButtonsMessage antigo para botões simples (apenas replies).
+
+	legacyButtons := make([]*waE2E.ButtonsMessage_Button, len(data.Buttons))
+	for i, btn := range data.Buttons {
+		legacyButtons[i] = &waE2E.ButtonsMessage_Button{
+			ButtonID: proto.String(btn.Id),
+			ButtonText: &waE2E.ButtonsMessage_Button_ButtonText{
+				DisplayText: proto.String(btn.DisplayText),
+			},
+			Type: waE2E.ButtonsMessage_Button_RESPONSE.Enum(),
+		}
+	}
 
 	if hasPix {
 		msg = &waE2E.Message{
 			InteractiveMessage: &waE2E.InteractiveMessage{
+				Header: &waE2E.InteractiveMessage_Header{
+					Title:              proto.String(data.Title),
+					Subtitle:           proto.String(data.Description),
+					HasMediaAttachment: proto.Bool(false),
+				},
+				Body: &waE2E.InteractiveMessage_Body{
+					Text: proto.String(""),
+				},
 				InteractiveMessage: &waE2E.InteractiveMessage_NativeFlowMessage_{
 					NativeFlowMessage: &waE2E.InteractiveMessage_NativeFlowMessage{
 						Buttons:           buttons,
 						MessageParamsJSON: &messageParamsJSON,
+						MessageVersion:    proto.Int32(1),
 					},
 				},
+				ContextInfo: contextInfo,
 			},
 		}
 	} else {
-		body := func() string {
-			t := "*" + data.Title + "*"
-			if data.Description != "" {
-				t += "\n\n" + data.Description + "\n"
-			}
-			return t
-		}()
+		// Vamos tentar a abordagem mais simples e direta possível.
+		// Assim como no PR do ListMessage, sem envelopamentos adicionais
+		// como FutureProofMessage ou TemplateMessage. Apenas o InteractiveMessage na raiz da mensagem.
+		bodyText := "*" + data.Title + "*"
+		if data.Description != "" {
+			bodyText += "\n\n" + data.Description + "\n"
+		}
 
-		msg = &waE2E.Message{ViewOnceMessage: &waE2E.FutureProofMessage{
-			Message: &waE2E.Message{
-				InteractiveMessage: &waE2E.InteractiveMessage{
-					Body: &waE2E.InteractiveMessage_Body{
-						Text: &body,
-					},
-					Footer: &waE2E.InteractiveMessage_Footer{
-						Text: &data.Footer,
-					},
-					InteractiveMessage: &waE2E.InteractiveMessage_NativeFlowMessage_{
-						NativeFlowMessage: &waE2E.InteractiveMessage_NativeFlowMessage{
-							Buttons:           buttons,
-							MessageParamsJSON: &messageParamsJSON,
-						},
+		msg = &waE2E.Message{
+			InteractiveMessage: &waE2E.InteractiveMessage{
+				Header: &waE2E.InteractiveMessage_Header{
+					Title:              proto.String(data.Title),
+					Subtitle:           proto.String(""),
+					HasMediaAttachment: proto.Bool(false),
+				},
+				Body: &waE2E.InteractiveMessage_Body{
+					Text: proto.String(bodyText),
+				},
+				Footer: &waE2E.InteractiveMessage_Footer{
+					Text: proto.String(data.Footer),
+				},
+				InteractiveMessage: &waE2E.InteractiveMessage_NativeFlowMessage_{
+					NativeFlowMessage: &waE2E.InteractiveMessage_NativeFlowMessage{
+						Buttons:           buttons,
+						MessageParamsJSON: &messageParamsJSON,
+						MessageVersion:    proto.Int32(1),
 					},
 				},
+				ContextInfo: contextInfo,
 			},
-		}}
+		}
 	}
 
 	recipient, err := s.validateAndCheckUserExists(data.Number, data.FormatJid, &data.Quoted.MessageID, &data.Quoted.MessageID, instance)
@@ -1802,8 +1842,7 @@ func (s *sendService) SendList(data *ListStruct, instance *instance_model.Instan
 	messageId := client.GenerateMessageID()
 
 	templateId := strconv.FormatInt(time.Now().UnixNano()/1000000, 10)
-
-	messageParamsJSON := `{"from":"api","templateId":` + templateId + `}`
+	messageParamsJSON := `{"from":"api","templateId":"` + templateId + `"}`
 
 	buttons := []*waE2E.InteractiveMessage_NativeFlowMessage_NativeFlowButton{}
 
@@ -1825,9 +1864,29 @@ func (s *sendService) SendList(data *ListStruct, instance *instance_model.Instan
 		return t
 	}()
 
+	contextInfo := &waE2E.ContextInfo{}
+	if data.Quoted.MessageID != "" {
+		contextInfo.StanzaID = proto.String(data.Quoted.MessageID)
+		if data.Quoted.Participant != "" {
+			participantJID, ok := utils.ParseJID(data.Quoted.Participant)
+			if ok {
+				contextInfo.Participant = proto.String(participantJID.String())
+			}
+		}
+	}
+
 	msg := &waE2E.Message{ViewOnceMessage: &waE2E.FutureProofMessage{
 		Message: &waE2E.Message{
+			MessageContextInfo: &waE2E.MessageContextInfo{
+				DeviceListMetadata:        &waE2E.DeviceListMetadata{},
+				DeviceListMetadataVersion: proto.Int32(2),
+			},
 			InteractiveMessage: &waE2E.InteractiveMessage{
+				Header: &waE2E.InteractiveMessage_Header{
+					Title:              proto.String(data.Title),
+					Subtitle:           proto.String(""),
+					HasMediaAttachment: proto.Bool(false),
+				},
 				Body: &waE2E.InteractiveMessage_Body{
 					Text: &body,
 				},
@@ -1838,8 +1897,10 @@ func (s *sendService) SendList(data *ListStruct, instance *instance_model.Instan
 					NativeFlowMessage: &waE2E.InteractiveMessage_NativeFlowMessage{
 						Buttons:           buttons,
 						MessageParamsJSON: &messageParamsJSON,
+						MessageVersion:    proto.Int32(1),
 					},
 				},
+				ContextInfo: contextInfo,
 			},
 		},
 	}}
