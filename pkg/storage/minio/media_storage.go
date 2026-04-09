@@ -71,6 +71,21 @@ func NewMinioMediaStorage(
 		return nil, fmt.Errorf("failed to create MinIO client: %w", err)
 	}
 
+	// Check if bucket exists, create if not
+	ctx := context.Background()
+	exists, err := client.BucketExists(ctx, bucketName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check if bucket exists: %w", err)
+	}
+
+	if !exists {
+		err = client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: region})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create bucket: %w", err)
+		}
+		fmt.Printf("Successfully created bucket %s\n", bucketName)
+	}
+
 	// Try to set bucket policy to allow public access (optional for some providers)
 	err = setBucketPolicy(client, bucketName)
 	if err != nil {
