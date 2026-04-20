@@ -13,6 +13,29 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
+// minioBucketAdmin is satisfied by *minio.Client; extracted for tests.
+type minioBucketAdmin interface {
+	BucketExists(ctx context.Context, bucketName string) (bool, error)
+	MakeBucket(ctx context.Context, bucketName string, opts minio.MakeBucketOptions) error
+}
+
+func ensureBucketExists(ctx context.Context, client minioBucketAdmin, bucketName, region string) error {
+	exists, err := client.BucketExists(ctx, bucketName)
+	if err != nil {
+		return fmt.Errorf("failed to check if bucket exists: %w", err)
+	}
+
+	if !exists {
+		err = client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: region})
+		if err != nil {
+			return fmt.Errorf("failed to create bucket: %w", err)
+		}
+		fmt.Printf("Successfully created bucket %s\n", bucketName)
+	}
+
+	return nil
+}
+
 type MinioMediaStorage struct {
 	client     *minio.Client
 	bucketName string
@@ -69,6 +92,10 @@ func NewMinioMediaStorage(
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create MinIO client: %w", err)
+	}
+
+	if err := ensureBucketExists(context.Background(), client, bucketName, region); err != nil {
+		return nil, err
 	}
 
 	// Try to set bucket policy to allow public access (optional for some providers)
